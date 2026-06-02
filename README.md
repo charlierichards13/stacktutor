@@ -24,4 +24,4 @@ Learn to debug. Don't just get the answer.
 
 ## Product Positioning
 
-StackTutor is not a homework cheating app. It is a guided debugging and code review trainer that helps students understand their mistakes through hints, explanations, test cases, and structured feedback.
+StackTutor is a guided debugging and code review trainer that helps students understand their mistakes through hints, explanations, test cases, and structured feedback.
