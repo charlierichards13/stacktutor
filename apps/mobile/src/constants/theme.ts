@@ -16,12 +16,29 @@ export const Colors = {
     textSecondary: '#60646C',
   },
   dark: {
-    text: '#ffffff',
-    background: '#000000',
-    backgroundElement: '#212225',
-    backgroundSelected: '#2E3135',
-    textSecondary: '#B0B4BA',
+    text: '#F8FAFC',
+    background: '#020617',
+    backgroundElement: '#0F172A',
+    backgroundSelected: '#1E293B',
+    textSecondary: '#CBD5E1',
   },
+} as const;
+
+// StackTutor brand design tokens (dark-first palette)
+export const ST = {
+  bg: '#020617',
+  surface: '#0F172A',
+  card: '#111827',
+  border: '#1E293B',
+  textPrimary: '#F8FAFC',
+  textSecondary: '#CBD5E1',
+  textMuted: '#64748B',
+  purple: '#7C3AED',
+  purpleLight: '#A78BFA',
+  cyan: '#22D3EE',
+  green: '#22C55E',
+  amber: '#F59E0B',
+  red: '#EF4444',
 } as const;
 
 export type ThemeColor = keyof typeof Colors.light & keyof typeof Colors.dark;
