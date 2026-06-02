@@ -1,0 +1,15 @@
+{
+  "name": "stacktutor",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI-powered code review for students learning to debug.",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:mobile": "npm --workspace apps/mobile run start",
+    "dev:web": "npm --workspace apps/web run dev",
+    "lint": "npm --workspaces run lint"
+  }
+}
