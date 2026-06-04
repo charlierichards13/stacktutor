@@ -63,7 +63,7 @@ export default function HomeScreen() {
         <View style={styles.header}>
           <Text style={styles.brand}>StackTutor</Text>
           <Text style={styles.tagline}>
-            {"Learn to debug.\nDon’t just get the answer."}
+            {"Learn to debug.\nDon't just get the answer."}
           </Text>
         </View>
 
@@ -139,7 +139,7 @@ const styles = StyleSheet.create({
   },
   sectionLabel: {
     fontFamily: Fonts.mono,
-    fontWeight: 500,
+    fontWeight: '500',
     fontSize: 10,
     color: ST.textMuted,
     textTransform: 'uppercase',

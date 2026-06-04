@@ -131,7 +131,7 @@ const styles = StyleSheet.create({
   },
   hintLabel: {
     fontFamily: Fonts.mono,
-    fontWeight: 500,
+    fontWeight: '500',
     fontSize: 10,
     color: ST.textMuted,
     textTransform: 'uppercase',
@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
   },
   langPill: {
     fontFamily: Fonts.mono,
-    fontWeight: 500,
+    fontWeight: '500',
     fontSize: 11,
     color: ST.purpleLight,
     borderWidth: 1,
