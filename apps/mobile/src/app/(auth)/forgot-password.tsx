@@ -1,15 +1,41 @@
 import { useState } from 'react';
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import * as Linking from 'expo-linking';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AuthInput } from '@/components/ui/auth-input';
+import { FormMessage } from '@/components/ui/form-message';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { MaxContentWidth, Spacing, ST } from '@/constants/theme';
+import { supabase } from '@/lib/supabase';
 
 export default function ForgotPasswordScreen() {
   const safeAreaInsets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sent, setSent] = useState(false);
+
+  async function handleSendResetLink() {
+    setLoading(true);
+    setError(null);
+    // Point the reset link back at the in-app screen where the user sets a new
+    // password. On web this resolves to e.g. http://localhost:8081/update-password.
+    const redirectTo =
+      Platform.OS === 'web' && typeof window !== 'undefined'
+        ? `${window.location.origin}/update-password`
+        : Linking.createURL('/update-password');
+    const { error: resetError } = await supabase.auth.resetPasswordForEmail(email.trim(), {
+      redirectTo,
+    });
+    if (resetError) {
+      setError(resetError.message);
+    } else {
+      setSent(true);
+    }
+    setLoading(false);
+  }
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -49,9 +75,15 @@ export default function ForgotPasswordScreen() {
             keyboardType="email-address"
             autoCapitalize="none"
           />
+          {error ? <FormMessage tone="error">{error}</FormMessage> : null}
+          {sent ? (
+            <FormMessage tone="success">
+              If an account exists for that email, a password reset link is on its way.
+            </FormMessage>
+          ) : null}
           <View style={styles.formActions}>
-            <PrimaryButton variant="primary" onPress={() => {}}>
-              Send Reset Link
+            <PrimaryButton variant="primary" onPress={handleSendResetLink} disabled={loading}>
+              {loading ? 'Sending…' : 'Send Reset Link'}
             </PrimaryButton>
           </View>
         </View>

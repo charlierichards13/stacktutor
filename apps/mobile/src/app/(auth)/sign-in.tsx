@@ -4,13 +4,32 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AuthInput } from '@/components/ui/auth-input';
+import { FormMessage } from '@/components/ui/form-message';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { MaxContentWidth, Spacing, ST } from '@/constants/theme';
+import { supabase } from '@/lib/supabase';
 
 export default function SignInScreen() {
   const safeAreaInsets = useSafeAreaInsets();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSignIn() {
+    setLoading(true);
+    setError(null);
+    const { error: signInError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password,
+    });
+    // On success the session updates and the root layout redirects into the
+    // app tabs automatically, so there's nothing to navigate here.
+    if (signInError) {
+      setError(signInError.message);
+      setLoading(false);
+    }
+  }
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -51,9 +70,10 @@ export default function SignInScreen() {
             placeholder="••••••••"
             secureTextEntry
           />
+          {error ? <FormMessage tone="error">{error}</FormMessage> : null}
           <View style={styles.formActions}>
-            <PrimaryButton variant="primary" onPress={() => {}}>
-              Sign In
+            <PrimaryButton variant="primary" onPress={handleSignIn} disabled={loading}>
+              {loading ? 'Signing In…' : 'Sign In'}
             </PrimaryButton>
             <Pressable
               onPress={() => router.push('/(auth)/forgot-password')}
