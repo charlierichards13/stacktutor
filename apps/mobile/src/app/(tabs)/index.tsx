@@ -1,10 +1,11 @@
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CodePreviewCard } from '@/components/ui/code-preview-card';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { ReviewModeCard } from '@/components/ui/review-mode-card';
 import { BottomTabInset, Fonts, MaxContentWidth, Spacing, ST } from '@/constants/theme';
+import { supabase } from '@/lib/supabase';
 
 const REVIEW_MODES = [
   {
@@ -61,10 +62,19 @@ export default function HomeScreen() {
       <View style={styles.inner}>
         {/* Brand header */}
         <View style={styles.header}>
-          <Text style={styles.brand}>StackTutor</Text>
-          <Text style={styles.tagline}>
-            {"Learn to debug.\nDon't just get the answer."}
-          </Text>
+          <View style={styles.headerText}>
+            <Text style={styles.brand}>StackTutor</Text>
+            <Text style={styles.tagline}>
+              {"Learn to debug.\nDon't just get the answer."}
+            </Text>
+          </View>
+          <Pressable
+            onPress={() => supabase.auth.signOut()}
+            accessibilityRole="button"
+            accessibilityLabel="Sign out"
+            style={({ pressed }) => [styles.signOut, pressed && styles.signOutPressed]}>
+            <Text style={styles.signOutText}>Sign out</Text>
+          </Pressable>
         </View>
 
         {/* CTAs */}
@@ -117,7 +127,27 @@ const styles = StyleSheet.create({
     gap: Spacing.five,
   },
   header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+    gap: Spacing.three,
+  },
+  headerText: {
+    flex: 1,
     gap: Spacing.two,
+  },
+  signOut: {
+    paddingVertical: Spacing.one,
+    paddingHorizontal: Spacing.two,
+    borderWidth: 1,
+    borderColor: ST.border,
+    borderRadius: 8,
+  },
+  signOutPressed: { opacity: 0.6 },
+  signOutText: {
+    color: ST.textMuted,
+    fontSize: 13,
+    fontWeight: '500',
   },
   brand: {
     color: ST.textPrimary,

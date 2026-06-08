@@ -4,14 +4,41 @@ import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { AuthInput } from '@/components/ui/auth-input';
+import { FormMessage } from '@/components/ui/form-message';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { MaxContentWidth, Spacing, ST } from '@/constants/theme';
+import { supabase } from '@/lib/supabase';
 
 export default function CreateAccountScreen() {
   const safeAreaInsets = useSafeAreaInsets();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [notice, setNotice] = useState<string | null>(null);
+
+  async function handleCreateAccount() {
+    setLoading(true);
+    setError(null);
+    setNotice(null);
+    const { data, error: signUpError } = await supabase.auth.signUp({
+      email: email.trim(),
+      password,
+      options: { data: { name: name.trim() } },
+    });
+    if (signUpError) {
+      setError(signUpError.message);
+      setLoading(false);
+      return;
+    }
+    // When a session is returned the root layout redirects into the app tabs.
+    // Otherwise Supabase requires email confirmation first.
+    if (!data.session) {
+      setNotice('Check your email to confirm your account, then sign in.');
+      setLoading(false);
+    }
+  }
 
   const contentPlatformStyle = Platform.select({
     android: {
@@ -62,9 +89,11 @@ export default function CreateAccountScreen() {
             placeholder="Create a password"
             secureTextEntry
           />
+          {error ? <FormMessage tone="error">{error}</FormMessage> : null}
+          {notice ? <FormMessage tone="success">{notice}</FormMessage> : null}
           <View style={styles.formActions}>
-            <PrimaryButton variant="primary" onPress={() => {}}>
-              Create Account
+            <PrimaryButton variant="primary" onPress={handleCreateAccount} disabled={loading}>
+              {loading ? 'Creating Account…' : 'Create Account'}
             </PrimaryButton>
           </View>
         </View>
