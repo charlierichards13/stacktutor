@@ -1,10 +1,15 @@
-import { Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, Platform, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { FormMessage } from '@/components/ui/form-message';
+import { PrimaryButton } from '@/components/ui/primary-button';
+import { ReviewHistoryCard } from '@/components/ui/review-history-card';
 import { BottomTabInset, Fonts, MaxContentWidth, Spacing, ST } from '@/constants/theme';
+import { useReviewHistory } from '@/hooks/use-review-history';
 
 export default function HistoryScreen() {
   const safeAreaInsets = useSafeAreaInsets();
+  const history = useReviewHistory();
   const insets = {
     ...safeAreaInsets,
     bottom: safeAreaInsets.bottom + BottomTabInset + Spacing.three,
@@ -34,25 +39,59 @@ export default function HistoryScreen() {
           <Text style={styles.subtitle}>Your past code reviews will appear here.</Text>
         </View>
 
-        <View style={styles.emptyState}>
-          <View style={styles.emptyIcon}>
-            <Text style={styles.emptyIconText}>{"</>"}</Text>
+        {history.status === 'loading' && (
+          <View style={styles.loadingState}>
+            <ActivityIndicator color={ST.purpleLight} />
+            <Text style={styles.loadingText}>Loading your reviews…</Text>
           </View>
-          <Text style={styles.emptyTitle}>No reviews yet</Text>
-          <Text style={styles.emptyDesc}>
-            Submit code from the home screen to start your first review.
-          </Text>
-          <View style={styles.hint}>
-            <Text style={styles.hintLabel}>supported languages</Text>
-            <View style={styles.hintPills}>
-              {['java', 'python', 'c++', 'typescript'].map((lang) => (
-                <Text key={lang} style={styles.langPill}>{lang}</Text>
+        )}
+
+        {history.status === 'error' && (
+          <View style={styles.errorState}>
+            <FormMessage tone="error">
+              Couldn’t load your review history. Check your connection and try again.
+            </FormMessage>
+            <PrimaryButton variant="ghost" onPress={history.retry}>
+              Try again
+            </PrimaryButton>
+          </View>
+        )}
+
+        {history.status === 'ready' &&
+          (history.reviews.length === 0 ? (
+            <EmptyState />
+          ) : (
+            <View style={styles.list}>
+              <Text style={styles.sectionLabel}>past reviews</Text>
+              {history.reviews.map((review) => (
+                <ReviewHistoryCard key={review.id} review={review} />
               ))}
             </View>
-          </View>
-        </View>
+          ))}
       </View>
     </ScrollView>
+  );
+}
+
+function EmptyState() {
+  return (
+    <View style={styles.emptyState}>
+      <View style={styles.emptyIcon}>
+        <Text style={styles.emptyIconText}>{'</>'}</Text>
+      </View>
+      <Text style={styles.emptyTitle}>No reviews yet</Text>
+      <Text style={styles.emptyDesc}>
+        Submit code from the home screen to start your first review.
+      </Text>
+      <View style={styles.hint}>
+        <Text style={styles.hintLabel}>supported languages</Text>
+        <View style={styles.hintPills}>
+          {['java', 'python', 'c++', 'typescript'].map((lang) => (
+            <Text key={lang} style={styles.langPill}>{lang}</Text>
+          ))}
+        </View>
+      </View>
+    </View>
   );
 }
 
@@ -85,6 +124,29 @@ const styles = StyleSheet.create({
     color: ST.textSecondary,
     fontSize: 15,
     lineHeight: 22,
+  },
+  loadingState: {
+    marginTop: Spacing.six,
+    alignItems: 'center',
+    gap: Spacing.three,
+  },
+  loadingText: {
+    color: ST.textMuted,
+    fontSize: 13,
+  },
+  errorState: {
+    gap: Spacing.three,
+  },
+  list: {
+    gap: Spacing.two,
+  },
+  sectionLabel: {
+    fontFamily: Fonts.mono,
+    fontWeight: '500',
+    fontSize: 10,
+    color: ST.textMuted,
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
   emptyState: {
     marginTop: Spacing.five,
