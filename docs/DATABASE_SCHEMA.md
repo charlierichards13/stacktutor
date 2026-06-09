@@ -4,6 +4,11 @@
 
 StackTutor uses Supabase Postgres for user profiles, saved code reviews, and review feedback.
 
+## Migration Status
+
+The initial schema lives in `supabase/migrations/20260602220408_create_initial_schema.sql`
+and has been applied to the dev Supabase project via `supabase db push`.
+
 ## Tables
 
 ### profiles
