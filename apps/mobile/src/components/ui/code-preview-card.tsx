@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View } from 'react-native';
+import { Platform, StyleSheet, Text, View, type TextStyle } from 'react-native';
 
 import { Fonts, ST } from '@/constants/theme';
 
@@ -10,7 +10,7 @@ const CODE = [
   { n: 5, text: 'return sum;', issue: false },
 ];
 
-const mono = Platform.select({ android: 700 }) ?? 500;
+const mono: TextStyle['fontWeight'] = Platform.select({ android: 700 }) ?? 500;
 
 export function CodePreviewCard() {
   return (
