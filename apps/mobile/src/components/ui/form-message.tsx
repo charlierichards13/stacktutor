@@ -2,17 +2,25 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { Spacing, ST } from '@/constants/theme';
 
+type Tone = 'error' | 'success' | 'info';
+
 type Props = {
-  tone: 'error' | 'success';
+  tone: Tone;
   children: string;
 };
 
-/** Small inline banner for auth form errors and success notices. */
+const TONE_STYLES: Record<Tone, { container: object; color: string }> = {
+  error: { container: { borderColor: ST.red, backgroundColor: 'rgba(239, 68, 68, 0.08)' }, color: ST.red },
+  success: { container: { borderColor: ST.green, backgroundColor: 'rgba(34, 197, 94, 0.08)' }, color: ST.green },
+  info: { container: { borderColor: ST.cyan, backgroundColor: 'rgba(34, 211, 238, 0.08)' }, color: ST.cyan },
+};
+
+/** Small inline banner for form errors, success notices, and info states. */
 export function FormMessage({ tone, children }: Props) {
-  const isError = tone === 'error';
+  const toneStyle = TONE_STYLES[tone];
   return (
-    <View style={[styles.container, isError ? styles.error : styles.success]}>
-      <Text style={[styles.text, { color: isError ? ST.red : ST.green }]}>{children}</Text>
+    <View style={[styles.container, toneStyle.container]}>
+      <Text style={[styles.text, { color: toneStyle.color }]}>{children}</Text>
     </View>
   );
 }
@@ -24,7 +32,5 @@ const styles = StyleSheet.create({
     paddingHorizontal: Spacing.three,
     paddingVertical: Spacing.two,
   },
-  error: { borderColor: ST.red, backgroundColor: 'rgba(239, 68, 68, 0.08)' },
-  success: { borderColor: ST.green, backgroundColor: 'rgba(34, 197, 94, 0.08)' },
   text: { fontSize: 13, lineHeight: 19 },
 });

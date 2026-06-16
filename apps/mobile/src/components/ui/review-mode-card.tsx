@@ -8,15 +8,28 @@ type Props = {
   description: string;
   accent?: string;
   onPress?: () => void;
+  selected?: boolean;
 };
 
-export function ReviewModeCard({ label, mono, description, accent = ST.purpleLight, onPress }: Props) {
+export function ReviewModeCard({
+  label,
+  mono,
+  description,
+  accent = ST.purpleLight,
+  onPress,
+  selected = false,
+}: Props) {
   return (
     <Pressable
       onPress={onPress}
       accessibilityRole="button"
       accessibilityLabel={label}
-      style={({ pressed }) => [styles.card, pressed && styles.pressed]}>
+      accessibilityState={{ selected }}
+      style={({ pressed }) => [
+        styles.card,
+        selected && { borderColor: accent, backgroundColor: 'rgba(124, 58, 237, 0.1)' },
+        pressed && styles.pressed,
+      ]}>
       <Text style={[styles.mono, { color: accent }]}>{mono}</Text>
       <Text style={styles.label}>{label}</Text>
       <Text style={styles.description}>{description}</Text>
