@@ -1,38 +1,28 @@
 import { Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { CodePreviewCard } from '@/components/ui/code-preview-card';
 import { PrimaryButton } from '@/components/ui/primary-button';
 import { ReviewModeCard } from '@/components/ui/review-mode-card';
 import { BottomTabInset, Fonts, MaxContentWidth, Spacing, ST } from '@/constants/theme';
+import { REVIEW_MODES } from '@/constants/review-options';
+import type { ReviewMode } from '@/lib/database.types';
 import { supabase } from '@/lib/supabase';
 
-const REVIEW_MODES = [
-  {
-    label: 'Find Bugs',
-    mono: 'debug',
-    description: 'Spot logic errors and edge cases',
-    accent: ST.red,
-  },
-  {
-    label: 'Generate Tests',
-    mono: 'tests',
-    description: 'Build test cases for your code',
-    accent: ST.cyan,
-  },
-  {
-    label: 'Explain Code',
-    mono: 'explain',
-    description: 'Understand what your code does',
-    accent: ST.purpleLight,
-  },
-  {
-    label: 'Security Review',
-    mono: 'sec',
-    description: 'Check for vulnerabilities',
-    accent: ST.amber,
-  },
-] as const;
+// A curated subset of modes is featured on the home screen; the full list
+// lives on the new-review form.
+const FEATURED_MODE_VALUES = new Set<ReviewMode>([
+  'find_bugs',
+  'generate_tests',
+  'explain_code',
+  'security_review',
+]);
+const FEATURED_MODES = REVIEW_MODES.filter((mode) => FEATURED_MODE_VALUES.has(mode.value));
+
+function openReview(mode?: ReviewMode) {
+  router.push(mode ? { pathname: '/new-review', params: { mode } } : '/new-review');
+}
 
 export default function HomeScreen() {
   const safeAreaInsets = useSafeAreaInsets();
@@ -79,7 +69,9 @@ export default function HomeScreen() {
 
         {/* CTAs */}
         <View style={styles.ctaStack}>
-          <PrimaryButton variant="primary">Start a Review</PrimaryButton>
+          <PrimaryButton variant="primary" onPress={() => openReview()}>
+            Start a Review
+          </PrimaryButton>
           <PrimaryButton variant="ghost">View History</PrimaryButton>
         </View>
 
@@ -88,13 +80,27 @@ export default function HomeScreen() {
           <Text style={styles.sectionLabel}>review modes</Text>
           <View style={styles.grid}>
             <View style={styles.gridRow}>
-              {REVIEW_MODES.slice(0, 2).map((m) => (
-                <ReviewModeCard key={m.label} {...m} />
+              {FEATURED_MODES.slice(0, 2).map((m) => (
+                <ReviewModeCard
+                  key={m.value}
+                  label={m.label}
+                  mono={m.mono}
+                  description={m.description}
+                  accent={m.accent}
+                  onPress={() => openReview(m.value)}
+                />
               ))}
             </View>
             <View style={styles.gridRow}>
-              {REVIEW_MODES.slice(2, 4).map((m) => (
-                <ReviewModeCard key={m.label} {...m} />
+              {FEATURED_MODES.slice(2, 4).map((m) => (
+                <ReviewModeCard
+                  key={m.value}
+                  label={m.label}
+                  mono={m.mono}
+                  description={m.description}
+                  accent={m.accent}
+                  onPress={() => openReview(m.value)}
+                />
               ))}
             </View>
           </View>
