@@ -83,8 +83,9 @@ export function isReviewMode(value: string | undefined): value is ReviewMode {
 }
 
 /**
- * Upper bound on pasted code length. Generous enough for a long homework file
- * (~12k characters is several hundred lines) while preventing pathological
- * input from bloating component state on a client-only screen.
+ * Upper bound on pasted code length (~12k characters ≈ several hundred lines).
+ * Re-exported from @stacktutor/shared so the client form and the future
+ * generate-review validator enforce the identical ceiling — the server still
+ * re-checks it independently because client limits are not security.
  */
-export const MAX_CODE_LENGTH = 12000;
+export { MAX_CODE_LENGTH } from '@stacktutor/shared';
