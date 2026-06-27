@@ -1,18 +1,22 @@
 /**
  * Provider-neutral enum values and limits for the review API contract.
  *
- * These are the server-side source of truth for the future `generate-review`
- * Edge Function (see docs/AI_REVIEW_BACKEND.md §4). They are intentionally kept
- * in lockstep with — but independent of — the mobile client constants:
+ * This module is the single source of truth for the supported language values,
+ * review-mode values, their derived types, and the maximum code length
+ * (see docs/AI_REVIEW_BACKEND.md §4). Both sides consume these definitions
+ * rather than redeclaring them:
  *
- *   - apps/mobile/src/lib/database.types.ts        (ReviewLanguage / ReviewMode)
- *   - apps/mobile/src/constants/review-options.ts  (REVIEW_LANGUAGES / MAX_CODE_LENGTH)
- *   - the code_reviews CHECK constraints in the initial Supabase migration
+ *   - apps/mobile/src/lib/database.types.ts        (re-exports ReviewLanguage / ReviewMode)
+ *   - apps/mobile/src/constants/review-options.ts  (consumes the tuples + MAX_CODE_LENGTH)
+ *   - the future `generate-review` Edge Function    (validates against these)
  *
- * The server re-declares these rather than importing the client constants on
- * purpose: client limits are not security, so the backend must validate against
- * its own copy. If any of the lists below change, update the consumers above so
- * the values stay identical.
+ * The server still runs its own validation against these values — client-side
+ * validation is never a security boundary — but the values themselves are
+ * defined once, here.
+ *
+ * The `code_reviews` CHECK constraints in the Supabase migration are the one
+ * place these values are mirrored by hand; keep that migration in sync if the
+ * lists below change.
  */
 
 /** Supported submission languages, exactly matching the request contract. */

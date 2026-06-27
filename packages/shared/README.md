@@ -19,15 +19,19 @@ provider, HTTP/CORS handling, prompt construction, auth, or network access.
 
 ## Source of truth
 
-This package is the single source of truth for the language/mode enums and
-`MAX_CODE_LENGTH`. The mobile app **consumes** them rather than redeclaring:
+This package is the single source of truth for the supported language values,
+review-mode values, their derived types, and `MAX_CODE_LENGTH`. The mobile app
+and the future backend **consume** these definitions rather than redeclaring them:
 
 - `apps/mobile/src/lib/database.types.ts` re-exports `ReviewLanguage` / `ReviewMode`.
-- `apps/mobile/src/constants/review-options.ts` re-exports `MAX_CODE_LENGTH`.
+- `apps/mobile/src/constants/review-options.ts` derives its option lists from the
+  `REVIEW_LANGUAGES` / `REVIEW_MODES` tuples and re-exports `MAX_CODE_LENGTH`.
+- the future `generate-review` Edge Function validates against these values.
 
-The `code_reviews` CHECK constraints in the migration must match the same values.
-The server still validates against its own copy on purpose — client limits are not
-security — but the values are now defined once, here.
+The server still runs its own validation against these values — client-side
+validation is never a security boundary — but the values are defined once, here.
+The only place they are mirrored by hand is the `code_reviews` CHECK constraints
+in the Supabase migration; keep that migration in sync when the lists change.
 
 ## Consuming this package
 
