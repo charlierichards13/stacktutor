@@ -1,0 +1,23 @@
+{
+  "name": "@stacktutor/shared",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Provider-neutral review API contracts and request validation shared by the future generate-review Edge Function and the mobile app.",
+  "type": "module",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "engines": {
+    "node": ">=22.18.0"
+  },
+  "scripts": {
+    "test": "node --test",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.18.0",
+    "typescript": "~6.0.3"
+  }
+}

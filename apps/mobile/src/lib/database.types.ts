@@ -4,19 +4,16 @@
  * keep both in sync when the schema changes.
  */
 
+import type { ReviewLanguage, ReviewMode } from '@stacktutor/shared';
+
 export type Json = string | number | boolean | null | { [key: string]: Json | undefined } | Json[];
 
-/** Allowed values for code_reviews.language (CHECK constraint). */
-export type ReviewLanguage = 'java' | 'python' | 'cpp' | 'typescript';
-
-/** Allowed values for code_reviews.review_mode (CHECK constraint). */
-export type ReviewMode =
-  | 'find_bugs'
-  | 'explain_code'
-  | 'generate_tests'
-  | 'check_complexity'
-  | 'security_review'
-  | 'hint_mode';
+/**
+ * Allowed values for code_reviews.language / code_reviews.review_mode (CHECK
+ * constraints), re-exported from @stacktutor/shared so the client, the future
+ * generate-review Edge Function, and the migration stay in lockstep.
+ */
+export type { ReviewLanguage, ReviewMode };
 
 export type Database = {
   public: {
