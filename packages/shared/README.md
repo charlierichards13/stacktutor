@@ -1,6 +1,6 @@
 # @stacktutor/shared
 
-Provider-neutral TypeScript contracts and pure request validation for the future
+Provider-neutral TypeScript contracts and pure request validation for the
 authenticated `generate-review` Supabase Edge Function.
 
 This package is the framework-free source of truth for the request, response, and
@@ -21,12 +21,14 @@ provider, HTTP/CORS handling, prompt construction, auth, or network access.
 
 This package is the single source of truth for the supported language values,
 review-mode values, their derived types, and `MAX_CODE_LENGTH`. The mobile app
-and the future backend **consume** these definitions rather than redeclaring them:
+and the `generate-review` Edge Function **consume** these definitions rather than
+redeclaring them:
 
 - `apps/mobile/src/lib/database.types.ts` re-exports `ReviewLanguage` / `ReviewMode`.
 - `apps/mobile/src/constants/review-options.ts` derives its option lists from the
   `REVIEW_LANGUAGES` / `REVIEW_MODES` tuples and re-exports `MAX_CODE_LENGTH`.
-- the future `generate-review` Edge Function validates against these values.
+- the `generate-review` Edge Function validates against these values via
+  `validateGenerateReviewRequest`.
 
 The server still runs its own validation against these values — client-side
 validation is never a security boundary — but the values are defined once, here.
@@ -45,12 +47,14 @@ Node ESM and Deno).
   is needed. Metro transforms the raw `.ts` source. TypeScript consumers must set
   `allowImportingTsExtensions: true` (safe with `noEmit`) so `tsc` accepts the
   package's `.ts` imports — `apps/mobile/tsconfig.json` does this.
-- **Future `generate-review` Edge Function (Deno).** Deno imports `.ts` directly,
-  so the function will reference these modules from `supabase/functions/_shared`
-  (e.g. an `import_map`/symlink/relative import into this package). Deno's `.ts`
-  requirement is exactly why the package keeps explicit `.ts` extensions. End-to-end
-  `supabase functions serve` + deploy resolution cannot be proven until the function
-  exists, so it is a verification item for that follow-on issue.
+- **`generate-review` Edge Function (Deno).** Deno imports `.ts` directly. The
+  function's `supabase/functions/generate-review/deno.json` maps `@stacktutor/shared`
+  straight to `../../../packages/shared/src/index.ts` — **no contracts are copied or
+  symlinked**. Deno's `.ts` requirement is exactly why the package keeps explicit
+  `.ts` extensions. `deno check`, `deno test`, and `deno bundle` all resolve this
+  cross-directory import successfully. Full `supabase functions serve` and the
+  hosted/deploy-runtime resolution remain pending until the Docker/Supabase CLI
+  runtime check.
 
 ## Requirements
 
