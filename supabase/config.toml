@@ -385,6 +385,15 @@ deno_version = 2
 # [edge_runtime.secrets]
 # secret_key = "env(SECRET_VALUE)"
 
+# Authenticated AI review-generation function (docs/AI_REVIEW_BACKEND.md). The
+# gateway verifies the caller's JWT before the function runs, in both local and
+# production environments; the function additionally verifies it via
+# @supabase/server/core verifyAuth (auth: 'user'), creating no Supabase client.
+# Keep verify_jwt enabled — do not weaken this.
+[functions.generate-review]
+enabled = true
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327
